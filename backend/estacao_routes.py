@@ -32,11 +32,17 @@ async def proximo_trem(linha: str, estacao: str, session: Session = Depends(pega
 
     # Chamada para a API
     next_train = get_next_train(linha, estacao)
+
+    if not next_train:
+        raise HTTPException(404, detail="Nenhum trem encontrado para esta estação no momento.")
+
     viagem_ids = sincronizar_dados_viagem(session, linha, next_train)
     next_train[0]["viagem_id"] = viagem_ids[0]
-    next_train[1]["viagem_id"] = viagem_ids[1]
     next_train[0]["ocorrencias"] = get_ocorrencias_viagem(session, viagem_ids[0])
-    next_train[1]["ocorrencias"] = get_ocorrencias_viagem(session, viagem_ids[1])
+
+    if len(next_train) > 1:
+        next_train[1]["viagem_id"] = viagem_ids[1]
+        next_train[1]["ocorrencias"] = get_ocorrencias_viagem(session, viagem_ids[1])
 
     return {
         "linha": linha,
