@@ -1,12 +1,15 @@
 from fastapi import HTTPException, APIRouter, Depends
+from sqlalchemy.orm import Session
 
 from consulta_estacao import LINHAS, ESTACOES, get_next_train
+from dependencies import pegar_sessao
 from security import verificar_token
+from viagem_service import sincronizar_dados_viagem
 
 estacao_router = APIRouter(prefix="/estacao", tags=["estacao"], dependencies=[Depends(verificar_token)])
 
 @estacao_router.get("/proximo-trem")
-def proximo_trem(linha: str, estacao: str):
+def proximo_trem(linha: str, estacao: str, session: Session = Depends(pegar_sessao)):
     """
     Exemplo:
     /proximo-trem?linha=L9&estacao=PIN
@@ -29,6 +32,9 @@ def proximo_trem(linha: str, estacao: str):
 
     # Chamada para a API
     next_train = get_next_train(linha, estacao)
+    viagem_ids = sincronizar_dados_viagem(session, linha, next_train)
+    next_train[0]["viagem_id"] = viagem_ids[0]
+    next_train[1]["viagem_id"] = viagem_ids[1]
 
     return {
         "linha": linha,

@@ -13,11 +13,9 @@ app.add_middleware(
 
 from auth_routes import auth_router
 from estacao_routes import estacao_router
-from viagem_routes import viagem_router
 
 app.include_router(auth_router)
 app.include_router(estacao_router)
-app.include_router(viagem_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)

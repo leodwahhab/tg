@@ -1,5 +1,5 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        create_engine, Double)
+                        create_engine, Double, Date)
 from sqlalchemy.orm import declarative_base, relationship
 
 db = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
@@ -23,7 +23,7 @@ class Linha(Base):
     __tablename__ = 'linha'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(Integer, nullable=False)
+    nome = Column(String(50), nullable=False)
     numero = Column(Integer, nullable=False)
     cor_hex = Column(String(6), nullable=False)
 
@@ -58,8 +58,11 @@ class Viagem(Base):
     __tablename__ = 'viagem'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    data_partida_prevista = Column(DateTime, nullable=False)
+    horario_chegada_api = Column(String, nullable=False)
+    data_referencia = Column(Date, nullable=False)
     sentido = Column(String(50), nullable=False)
+    status = Column(String(50), nullable=False)
+    updated_at = Column(DateTime, nullable=False)
     id_linha = Column(Integer, ForeignKey('linha.id'), nullable=False)
 
     linha = relationship('Linha', back_populates='viagens')

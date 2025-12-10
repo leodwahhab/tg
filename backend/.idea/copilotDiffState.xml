@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CopilotDiffPersistence">
+    <option name="pendingDiffs">
+      <map>
+        <entry key="$PROJECT_DIR$/verificar_dados.py">
+          <value>
+            <PendingDiffInfo>
+              <option name="filePath" value="$PROJECT_DIR$/verificar_dados.py" />
+              <option name="updatedContent" value="&quot;&quot;&quot;Script para verificar os dados inseridos no banco&quot;&quot;&quot;&#10;from sqlalchemy import create_engine, text&#10;&#10;db = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')&#10;&#10;with db.connect() as conn:&#10;    # Verificar linhas&#10;    print(&quot;=== LINHAS ===&quot;)&#10;    result = conn.execute(text(&quot;SELECT id, nome, numero, cor_hex FROM linha ORDER BY id&quot;))&#10;    for row in result:&#10;        print(f&quot;ID: {row[0]}, Nome: {row[1]}, Número: {row[2]}, Cor: #{row[3]}&quot;)&#10;    &#10;    print(&quot;\n=== ESTAÇÕES (primeiras 10) ===&quot;)&#10;    result = conn.execute(text(&quot;SELECT id, nome FROM estacao ORDER BY id LIMIT 10&quot;))&#10;    for row in result:&#10;        print(f&quot;ID: {row[0]}, Nome: {row[1]}&quot;)&#10;    &#10;    print(&quot;\n=== TOTAL DE ESTAÇÕES ===&quot;)&#10;    result = conn.execute(text(&quot;SELECT COUNT(*) FROM estacao&quot;))&#10;    total = result.scalar()&#10;    print(f&quot;Total: {total} estações&quot;)&#10;    &#10;    print(&quot;\n=== RELACIONAMENTOS LINHA-ESTAÇÃO (primeiros 10) ===&quot;)&#10;    result = conn.execute(text(&quot;&quot;&quot;&#10;        SELECT le.id_linha, l.nome, le.id_estacao, e.nome, le.ordem &#10;        FROM linha_estacao le&#10;        JOIN linha l ON le.id_linha = l.id&#10;        JOIN estacao e ON le.id_estacao = e.id&#10;        ORDER BY le.id_linha, le.ordem&#10;        LIMIT 10&#10;    &quot;&quot;&quot;))&#10;    for row in result:&#10;        print(f&quot;Linha {row[0]} ({row[1]}) - Estação {row[2]} ({row[3]}) - Ordem: {row[4]}&quot;)&#10;    &#10;    print(&quot;\n=== TOTAL DE RELACIONAMENTOS ===&quot;)&#10;    result = conn.execute(text(&quot;SELECT COUNT(*) FROM linha_estacao&quot;))&#10;    total = result.scalar()&#10;    print(f&quot;Total: {total} relacionamentos&quot;)&#10;" />
+            </PendingDiffInfo>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
