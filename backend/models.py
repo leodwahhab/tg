@@ -35,6 +35,7 @@ class Estacao(Base):
     __tablename__ = 'estacao'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    codigo = Column(String(3), nullable=False, unique=True, index=True)
     nome = Column(String(50), nullable=False)
     latitude = Column(Double, nullable=False)
     longitude = Column(Double, nullable=False)

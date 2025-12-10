@@ -9,7 +9,7 @@ from viagem_service import sincronizar_dados_viagem
 estacao_router = APIRouter(prefix="/estacao", tags=["estacao"], dependencies=[Depends(verificar_token)])
 
 @estacao_router.get("/proximo-trem")
-def proximo_trem(linha: str, estacao: str, session: Session = Depends(pegar_sessao)):
+async def proximo_trem(linha: str, estacao: str, session: Session = Depends(pegar_sessao)):
     """
     Exemplo:
     /proximo-trem?linha=L9&estacao=PIN

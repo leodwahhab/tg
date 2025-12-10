@@ -25,3 +25,11 @@ class ViagemSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+class ViagemUsuarioSchema(BaseModel):
+    id_viagem: int
+    cod_estacao: str
+    horario_embarque: datetime
+
+    class Config:
+        from_attributes = True
