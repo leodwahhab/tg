@@ -3,6 +3,7 @@ uvicorn~=0.38.0
 requests~=2.32.5
 aiohttp
 
+psycopg2
 SQLAlchemy~=2.0.44
 alembic~=1.17.2
 
@@ -11,3 +12,4 @@ pydantic~=2.12.5
 python-dotenv~=1.2.1
 passlib~=1.7.4
 python-jose~=3.5.0
+python-multipart
