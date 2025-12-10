@@ -1,5 +1,5 @@
 from sqlalchemy import (Boolean, Column, DateTime, ForeignKey, Integer, String,
-                        create_engine, Double, Date)
+                        create_engine, Double, Date, and_)
 from sqlalchemy.orm import declarative_base, relationship
 
 db = create_engine('postgresql://postgres:postgres@localhost:5432/postgres')
@@ -16,7 +16,6 @@ class Usuario(Base):
 
     viagens = relationship('ViagemUsuario', back_populates='usuario', cascade='all, delete-orphan')
     localizacoes = relationship('Localizacao', back_populates='usuario', cascade='all, delete-orphan')
-    ocorrencias = relationship('Ocorrencia', back_populates='usuario', cascade='all, delete-orphan')
 
 
 class Linha(Base):
@@ -81,6 +80,8 @@ class ViagemUsuario(Base):
     viagem = relationship('Viagem', back_populates='passageiros')
     estacao = relationship('Estacao', back_populates='embarques')
     usuario = relationship('Usuario', back_populates='viagens')
+    # Nota: Relacionamento com Ocorrencia removido para evitar ambiguidade de FK
+    # Use query manual: session.query(Ocorrencia).filter_by(id_viagem=X, id_usuario_viagem=Y)
 
 
 class Localizacao(Base):
@@ -95,14 +96,30 @@ class Localizacao(Base):
     usuario = relationship('Usuario', back_populates='localizacoes')
 
 
+class TipoOcorrencia(Base):
+    __tablename__ = 'tipo_ocorrencia'
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    nome = Column(String(100), nullable=False, unique=True)
+    descricao = Column(String(255), nullable=False)
+
+    ocorrencias = relationship('Ocorrencia', back_populates='tipo_ocorrencia')
+
+
 class Ocorrencia(Base):
     __tablename__ = 'ocorrencia'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     num_vagao = Column(Integer, nullable=False)
-    tipo = Column(String(50), nullable=False)
+    id_tipo = Column(Integer, ForeignKey('tipo_ocorrencia.id'), nullable=False)
     data_hora = Column(DateTime, nullable=False)
     valido = Column(Boolean, nullable=False)
-    id_usuario = Column(Integer, ForeignKey('usuario.id'), nullable=False)
+    id_viagem = Column(Integer, ForeignKey('viagem_usuario.id_viagem'), nullable=False)
+    id_usuario_viagem = Column(Integer, ForeignKey('viagem_usuario.id_usuario'), nullable=False)
 
-    usuario = relationship('Usuario', back_populates='ocorrencias')
+    tipo_ocorrencia = relationship('TipoOcorrencia', back_populates='ocorrencias')
+    viagem_usuario = relationship(
+        'ViagemUsuario',
+        foreign_keys=[id_viagem, id_usuario_viagem],
+        primaryjoin='and_(Ocorrencia.id_viagem == ViagemUsuario.id_viagem, Ocorrencia.id_usuario_viagem == ViagemUsuario.id_usuario)'
+    )

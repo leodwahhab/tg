@@ -18,18 +18,48 @@ class LoginSchema(BaseModel):
         from_attributes = True
 
 
-class ViagemSchema(BaseModel):
+class ViagemUsuarioSchema(BaseModel):
     id_viagem: int
-    id_estacao: int
+    cod_estacao: str
     horario_embarque: datetime
 
     class Config:
         from_attributes = True
 
-class ViagemUsuarioSchema(BaseModel):
+
+class TipoOcorrenciaSchema(BaseModel):
+    id: int
+    nome: str
+    descricao: str
+
+    class Config:
+        from_attributes = True
+
+
+class TipoOcorrenciaCreateSchema(BaseModel):
+    nome: str
+    descricao: str
+
+    class Config:
+        from_attributes = True
+
+
+class OcorrenciaCreateSchema(BaseModel):
+    num_vagao: int
+    id_tipo: int  # ID do tipo de ocorrência (1-20)
+
+    class Config:
+        from_attributes = True
+
+
+class OcorrenciaSchema(BaseModel):
+    id: int
+    num_vagao: int
+    id_tipo: int
+    data_hora: datetime
+    valido: bool
     id_viagem: int
-    cod_estacao: str
-    horario_embarque: datetime
+    id_usuario_viagem: int
 
     class Config:
         from_attributes = True

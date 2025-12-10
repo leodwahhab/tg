@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from consulta_estacao import LINHAS, ESTACOES, get_next_train
 from dependencies import pegar_sessao
 from security import verificar_token
-from viagem_service import sincronizar_dados_viagem
+from viagem_service import sincronizar_dados_viagem, get_ocorrencias_viagem
 
 estacao_router = APIRouter(prefix="/estacao", tags=["estacao"], dependencies=[Depends(verificar_token)])
 
@@ -35,6 +35,8 @@ async def proximo_trem(linha: str, estacao: str, session: Session = Depends(pega
     viagem_ids = sincronizar_dados_viagem(session, linha, next_train)
     next_train[0]["viagem_id"] = viagem_ids[0]
     next_train[1]["viagem_id"] = viagem_ids[1]
+    next_train[0]["ocorrencias"] = get_ocorrencias_viagem(session, viagem_ids[0])
+    next_train[1]["ocorrencias"] = get_ocorrencias_viagem(session, viagem_ids[1])
 
     return {
         "linha": linha,

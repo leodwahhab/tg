@@ -39,3 +39,27 @@ def sincronizar_dados_viagem(db: Session, linha_codigo: str, dados_api: list):
         viagem_ids.append(viagem.id)
         db.refresh(viagem)
     return viagem_ids
+
+def get_ocorrencias_viagem(db: Session, viagem_id: int):
+    """
+    Retorna as ocorrências associadas a uma viagem específica.
+    """
+    from models import Ocorrencia, TipoOcorrencia
+
+    ocorrencias = (db.query(Ocorrencia)
+                     .filter(Ocorrencia.id_viagem == viagem_id)
+                     .all())
+
+    resultado = []
+    for ocorrencia in ocorrencias:
+        tipo = db.query(TipoOcorrencia).filter(TipoOcorrencia.id == ocorrencia.id_tipo).first()
+        resultado.append({
+            "id": ocorrencia.id,
+            "num_vagao": ocorrencia.num_vagao,
+            "data_hora": ocorrencia.data_hora.isoformat(),
+            "tipo": {
+                "id": tipo.id,
+                "nome": tipo.nome
+            }
+        })
+    return resultado
